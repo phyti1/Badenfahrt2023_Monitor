@@ -30,11 +30,12 @@ namespace RCB_Viewer
         public MainWindow()
         {
             InitializeComponent();
-            
+
             DataContext = Configurations.Instance;
 
             Configurations.Instance.Backend = new Backend();
             Closing += OnWindowClosing;
+            this.WindowState = WindowState.Maximized;
         }
     }
 }

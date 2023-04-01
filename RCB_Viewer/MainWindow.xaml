@@ -3,9 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Icon="Resources/rcb_small.ico"
         xmlns:local="clr-namespace:RCB_Viewer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1000">
+        Title="" Height="1000" Width="1300">
     <Grid Margin="5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*" />
@@ -18,7 +19,7 @@
             <RowDefinition Height="3*" />
             <RowDefinition Height="3*" />
         </Grid.RowDefinitions>
-        <TextBlock HorizontalAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" FontSize="80" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" >
+        <TextBlock HorizontalAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" FontSize="80" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" FontStyle="Italic">
             Ruderclub Baden Row Meter
         </TextBlock>
         <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="50" FontWeight="Bold">
@@ -33,6 +34,12 @@
             Bestleistung [W]
         </TextBlock>
         <TextBlock Grid.Row="3" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="50" FontWeight="Bold" Text="{Binding BestPower}" />
+        <Image Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="250" Source="Resources/RCB-Hauptlogo.jpg" />
+        <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="30" FontWeight="Bold" Margin="5">
+            Projekt von Pascal and Luigi
+        </TextBlock>
+
+        <TextBlock Grid.Row="3" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="10" Text="{Binding LastError}" />
 
         <ProgressBar Grid.Row="1" Grid.Column="1" Grid.RowSpan="3" Orientation="Vertical" Margin="10" Value="{Binding Source={x:Static local:Configurations.Instance}, Path=MotorPower}" />
     </Grid>

@@ -83,6 +83,37 @@ namespace RCB_Viewer
                 OnPropertyChanged();
             }
         }
+        private int _baudRate = 9600;
+        public int BaudRate
+        {
+            get => _baudRate;
+            set
+            {
+                _baudRate = value;
+                OnPropertyChanged();
+            }
+        }
+        private string _comPort = "COM1";
+        public string ComPort
+        {
+            get => _comPort;
+            set
+            {
+                _comPort = value;
+                OnPropertyChanged();
+            }
+        }
+        private string _lastError = "";
+        public string LastError
+        {
+            get => _lastError;
+            set
+            {
+                _lastError = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         private int _motorPower;
         [JsonIgnore]
