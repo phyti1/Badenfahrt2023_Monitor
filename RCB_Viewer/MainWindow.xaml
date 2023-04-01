@@ -35,8 +35,8 @@
         </TextBlock>
         <TextBlock Grid.Row="3" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="50" FontWeight="Bold" Text="{Binding BestPower}" />
         <Image Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="250" Source="Resources/RCB-Hauptlogo.jpg" />
-        <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="30" FontWeight="Bold" Margin="5">
-            Projekt von Pascal and Luigi
+        <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="30" Margin="5">
+            Projekt von Pascal Berger and Luigi Zadra
         </TextBlock>
 
         <TextBlock Grid.Row="3" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="10" Text="{Binding LastError}" />
