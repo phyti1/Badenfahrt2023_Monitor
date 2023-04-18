@@ -1,4 +1,12 @@
 {
+  "MotorPowerMin": 0,
+  "MotorPowerMax": 1000,
+  "LightPowerMin": 250,
+  "LightPowerMax": 1000,
+  "BaudRate": 9600,
+  "ComPort": "COM1",
+  "LastError": "",
+  "RunningAvgCountMS": 5000,
   "BestPower": 0,
   "PrevDistance": 0
 }

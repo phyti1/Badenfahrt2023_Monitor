@@ -42,7 +42,8 @@ namespace RCB_Viewer
                 //Monitor data changes, and display
                 while (true)
                 {
-                    Thread.Sleep(100);
+                    int _delay = 100;
+                    Thread.Sleep(_delay);
                     if(Application.Current != null)
                     {
                         Application.Current.Dispatcher.Invoke(() =>
@@ -64,7 +65,8 @@ namespace RCB_Viewer
                                 {
                                     //send serial data
                                     port.Open();
-                                    port.WriteLine($"{Configurations.Instance.MotorPower}");
+                                    port.WriteLine($"M{(int)Math.Round(Configurations.Instance.MotorPowerSmooth)}");
+                                    port.WriteLine($"D{(int)Math.Round(Configurations.Instance.LightPowerSmooth)}");
                                     port.Close();
                                 }
                                 init_counter += 1;
@@ -92,8 +94,27 @@ namespace RCB_Viewer
                                     Debug.WriteLine(Configurations.Instance.Power.ToString());
                                     Debug.WriteLine(Configurations.Instance.Distance.ToString());
                                 }
+
+                                Configurations.Instance.MotorPowerHist.Add(Configurations.Instance.MotorPower);
+                                int count_delta = Configurations.Instance.MotorPowerHist.Count() - (Configurations.Instance.RunningAvgCountMS / _delay);
+                                if (count_delta < 0) { count_delta = 0; }
+                                foreach (int i in Enumerable.Range(0, count_delta))
+                                {
+                                    Configurations.Instance.MotorPowerHist.RemoveAt(0);
+                                }
+                                Configurations.Instance.OnPropertyChanged(nameof(Configurations.Instance.MotorPowerSmooth));
+
+                                Configurations.Instance.LightPowerHist.Add(Configurations.Instance.LightPower);
+                                count_delta = Configurations.Instance.LightPowerHist.Count() - (Configurations.Instance.RunningAvgCountMS / _delay);
+                                if (count_delta < 0) { count_delta = 0; }
+                                foreach (int i in Enumerable.Range(0, count_delta))
+                                {
+                                    Configurations.Instance.LightPowerHist.RemoveAt(0);
+                                }
+                                Configurations.Instance.OnPropertyChanged(nameof(Configurations.Instance.LightPowerSmooth));
+
                             }
-                            catch(Exception e)
+                            catch (Exception e)
                             {
                                 init_counter += 1;
                                 Configurations.Instance.LastError = e.ToString();

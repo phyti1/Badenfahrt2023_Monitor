@@ -13,6 +13,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
+using System.Windows.Media.Animation;
+using System.Threading;
+using System.Windows;
+using System.Windows.Data;
 
 namespace RCB_Viewer
 {
@@ -42,7 +47,6 @@ namespace RCB_Viewer
             }
         }
 
-
         internal static void CreateNew()
         {
             _configIsLoading = true;
@@ -56,6 +60,36 @@ namespace RCB_Viewer
         [JsonIgnore]
         public Backend Backend { get; set; }
 
+        private bool _isTesting = false;
+        [JsonIgnore]
+        public ICommand TestCommand { get; } = new RelayCommand(async (args) =>
+        {
+            if (Configurations.Instance._isTesting) { return; }
+            Configurations.Instance._isTesting = true;
+            await Task.Run(() =>
+            {
+                foreach (int i in Enumerable.Range(1, 5))
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Configurations.Instance.Power += 200;
+                    });
+                    Thread.Sleep(3000);
+                }
+                Thread.Sleep(10000);
+                foreach (int i in Enumerable.Range(1, 2))
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Configurations.Instance.Power -= 500;
+                    });
+                    Thread.Sleep(10000);
+                }
+            });
+            Configurations.Instance._isTesting = false;
+        });
+
+
         private int _power;
         [JsonIgnore]
         public int Power
@@ -65,15 +99,25 @@ namespace RCB_Viewer
             {
                 _power = value;
                 MotorPower = value;
+                LightPower = value;
                 OnPropertyChanged();
-                if(_power > _bestPower)
+                if (_power > _bestPower)
                 {
                     BestPower = _power;
                 }
             }
         }
-
-        private int _motorPowerMax = 500;
+        private int _motorPowerMin = 0;
+        public int MotorPowerMin
+        {
+            get => _motorPowerMin;
+            set
+            {
+                _motorPowerMin = value;
+                OnPropertyChanged();
+            }
+        }
+        private int _motorPowerMax = 1000;
         public int MotorPowerMax
         {
             get => _motorPowerMax;
@@ -83,6 +127,27 @@ namespace RCB_Viewer
                 OnPropertyChanged();
             }
         }
+        private int _lightPowerMin = 250;
+        public int LightPowerMin
+        {
+            get => _lightPowerMin;
+            set
+            {
+                _lightPowerMin = value;
+                OnPropertyChanged();
+            }
+        }
+        private int _lightPowerMax = 1000;
+        public int LightPowerMax
+        {
+            get => _lightPowerMax;
+            set
+            {
+                _lightPowerMax = value;
+                OnPropertyChanged();
+            }
+        }
+
         private int _baudRate = 9600;
         public int BaudRate
         {
@@ -114,6 +179,22 @@ namespace RCB_Viewer
             }
         }
 
+        private int getScaled(double value, double min, double max)
+        {
+            double minScaled = (min / max * 100);
+            double valueScaled = value / max * (100 - minScaled);
+            //non linear transformation
+            valueScaled = Math.Sqrt(valueScaled / (100 - minScaled)) * (100 - minScaled);
+
+            valueScaled += minScaled;
+            if(valueScaled > max)
+            {
+                valueScaled = max;
+            }
+
+
+            return (int)Math.Round(valueScaled);
+        }
 
         private int _motorPower;
         [JsonIgnore]
@@ -122,14 +203,61 @@ namespace RCB_Viewer
             get => _motorPower;
             set
             {
-                _motorPower = value / (_motorPowerMax / 100);
-                if(_motorPower > 100)
-                {
-                    _motorPower = 100;
-                }
+                _motorPower = getScaled(value, _motorPowerMin, _motorPowerMax);
                 OnPropertyChanged();
             }
         }
+
+        [JsonIgnore]
+        public List<double> MotorPowerHist { get; set; } = new List<double>();
+
+        [JsonIgnore]
+        public double MotorPowerSmooth
+        {
+            get
+            {
+                try
+                {
+                    return MotorPowerHist.Average();
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
+        }
+
+        private int _lightPower;
+        [JsonIgnore]
+        public int LightPower
+        {
+            get => _lightPower;
+            set
+            {
+                _lightPower = getScaled(value, _lightPowerMin, _lightPowerMax);
+                OnPropertyChanged();
+            }
+        }
+        [JsonIgnore]
+        public List<double> LightPowerHist { get; set; } = new List<double>();
+        [JsonIgnore]
+        public double LightPowerSmooth
+        {
+            get
+            {
+                try
+                {
+                    return LightPowerHist.Average();
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
+        }
+
+
+        public int RunningAvgCountMS { get; set; } = 5000;
 
         private int _bestPower;
         public int BestPower
@@ -241,6 +369,9 @@ namespace RCB_Viewer
                     {
                         throw new Exception("deserialize returned null");
                     }
+                    Configurations.Instance.LightPower = 0;
+                    Configurations.Instance.MotorPower = 0;
+
                     _configIsLoading = false;
                     return null;
                 }
@@ -251,6 +382,9 @@ namespace RCB_Viewer
                         Configurations.CreateNew();
                         Serialize();
                     }
+                    Configurations.Instance.LightPower = 0;
+                    Configurations.Instance.MotorPower = 0;
+
                     _configIsLoading = false;
                     return ex;
                 }
@@ -275,7 +409,7 @@ namespace RCB_Viewer
 
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        public void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
             if (!Configurations._configIsLoading)
             {
