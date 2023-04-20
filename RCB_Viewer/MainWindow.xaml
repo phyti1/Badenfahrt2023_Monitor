@@ -45,8 +45,8 @@
 
         <TextBlock Grid.Row="3" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="10" Text="{Binding LastError}" />
 
-        <ProgressBar Grid.Row="1" Grid.Column="1" Grid.RowSpan="3" Orientation="Vertical" Margin="10, 10, 0, 10" Value="{Binding Source={x:Static local:Configurations.Instance}, Path=MotorPowerSmooth, Mode=OneWay}" />
-        <ProgressBar Grid.Row="1" Grid.Column="2" Grid.RowSpan="3" Orientation="Vertical" Margin="0, 10, 10, 10" Value="{Binding Source={x:Static local:Configurations.Instance}, Path=LightPowerSmooth, Mode=OneWay}" />
+        <ProgressBar Foreground="Brown" Grid.Row="1" Grid.Column="1" Grid.RowSpan="3" Orientation="Vertical" Margin="10, 10, 0, 10" Value="{Binding Source={x:Static local:Configurations.Instance}, Path=MotorPowerSmooth, Mode=OneWay}" />
+        <ProgressBar Foreground="YellowGreen" Grid.Row="1" Grid.Column="2" Grid.RowSpan="3" Orientation="Vertical" Margin="0, 10, 10, 10" Value="{Binding Source={x:Static local:Configurations.Instance}, Path=LightPowerSmooth, Mode=OneWay}" />
         <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100"  Margin="10, 10, 0, 10">
             ⚙️
         </TextBlock>        
