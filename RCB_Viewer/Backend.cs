@@ -36,9 +36,9 @@ namespace RCB_Viewer
                 devices[i].Reset();
             }
 
-
             Task.Run(() =>
             {
+                bool _isSendingSerial = false;
                 //Monitor data changes, and display
                 while (true)
                 {
@@ -61,13 +61,28 @@ namespace RCB_Viewer
                                     //    devices[i].Reset();
                                     //}
                                 }
-                                if (init_counter % 10 == 0)
+                                if (init_counter % 3 == 0)
                                 {
                                     //send serial data
-                                    port.Open();
-                                    port.WriteLine($"M{(int)Math.Round(Configurations.Instance.MotorPowerSmooth)}");
-                                    port.WriteLine($"D{(int)Math.Round(Configurations.Instance.LightPowerSmooth)}");
-                                    port.Close();
+                                    if(!_isSendingSerial)
+                                    {
+                                        _isSendingSerial = true;
+                                        Task.Run(() =>
+                                        {
+                                            try
+                                            {
+                                                port.Open();
+                                                port.WriteLine($"M{(int)Math.Round(Configurations.Instance.MotorPowerSmooth)}");
+                                                port.WriteLine($"D{(int)Math.Round(Configurations.Instance.LightPowerSmooth)}");
+                                                port.Close();
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                Configurations.Instance.LastError = e.ToString();
+                                            }
+                                        });
+                                        _isSendingSerial = false;
+                                    }
                                 }
                                 init_counter += 1;
 
