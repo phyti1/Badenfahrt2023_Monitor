@@ -50,17 +50,18 @@ namespace RCB_Viewer
                         {
                             try
                             {
-                                if (init_counter % (10*60*10) == 0)
-                                {
-                                    port.Dispose();
-                                    Process.Start(Process.GetCurrentProcess().MainModule.FileName);
-                                    Application.Current.Shutdown();
-                                    //reinitialize
-                                    //for (ushort i = 0; i < deviceCount; i++)
-                                    //{
-                                    //    devices[i].Reset();
-                                    //}
-                                }
+                                //don't restart because of rapid change in motor signal
+                                //if (init_counter % (10*60*10) == 0)
+                                //{
+                                //    port.Dispose();
+                                //    Process.Start(Process.GetCurrentProcess().MainModule.FileName);
+                                //    Application.Current.Shutdown();
+                                //    //reinitialize
+                                //    //for (ushort i = 0; i < deviceCount; i++)
+                                //    //{
+                                //    //    devices[i].Reset();
+                                //    //}
+                                //}
                                 if (init_counter % 3 == 0)
                                 {
                                     //send serial data

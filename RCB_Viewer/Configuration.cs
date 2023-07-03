@@ -72,7 +72,7 @@ namespace RCB_Viewer
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        Configurations.Instance.Power += 200;
+                        Configurations.Instance.Power += (Instance.MotorPowerMax - Instance.MotorPowerMin) / 5;
                     });
                     Thread.Sleep(3000);
                 }
@@ -81,7 +81,7 @@ namespace RCB_Viewer
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        Configurations.Instance.Power -= 500;
+                        Configurations.Instance.Power -= (Instance.MotorPowerMax - Instance.MotorPowerMin) / 2;
                     });
                     Thread.Sleep(10000);
                 }
@@ -183,15 +183,15 @@ namespace RCB_Viewer
         {
             double minScaled = (min / max * 100);
             double valueScaled = value / max * (100 - minScaled);
-            //non linear transformation
-            valueScaled = Math.Sqrt(valueScaled / (100 - minScaled)) * (100 - minScaled);
+
+            //non linear transformation (make lower power have more inpact on motor speed)
+            //valueScaled = Math.Sqrt(valueScaled / (100 - minScaled)) * (100 - minScaled);
 
             valueScaled += minScaled;
             if(valueScaled > max)
             {
                 valueScaled = max;
             }
-
 
             return (int)Math.Round(valueScaled);
         }
@@ -204,6 +204,10 @@ namespace RCB_Viewer
             set
             {
                 _motorPower = getScaled(value, _motorPowerMin, _motorPowerMax);
+                if(_motorPower > 100)
+                {
+                    _motorPower = 100;
+                }
                 OnPropertyChanged();
             }
         }
@@ -235,6 +239,10 @@ namespace RCB_Viewer
             set
             {
                 _lightPower = getScaled(value, _lightPowerMin, _lightPowerMax);
+                if(_lightPower > 100)
+                {
+                    _lightPower = 100;
+                }
                 OnPropertyChanged();
             }
         }
