@@ -9,13 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\2000mScull.mp4" />
     <None Remove="Resources\RCB-Hauptlogo.jpg" />
     <None Remove="Resources\rcb_small.ico" />
+    <None Remove="Resources\Roboto-Regular.ttf" />
+    <None Remove="Resources\Roboto-Thin.ttf" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MaterialDesignThemes" Version="5.0.0-ci342" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.IO.Ports" Version="7.0.0" />
+    <PackageReference Include="System.IO.Ports" Version="8.0.0-preview.6.23329.7" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,12 +27,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Resources\2000mScull.mp4">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Resources\RCB-Hauptlogo.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\rcb_small.ico">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\Roboto-Regular.ttf" />
+    <Resource Include="Resources\Roboto-Thin.ttf" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

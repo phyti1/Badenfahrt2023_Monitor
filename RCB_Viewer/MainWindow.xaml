@@ -3,19 +3,22 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:material="http://materialdesigninxaml.net/winfx/xaml/themes"
         Icon="Resources/rcb_small.ico"
         xmlns:local="clr-namespace:RCB_Viewer"
         mc:Ignorable="d"
         Title="" Height="1000" Width="1300">
     <Window.InputBindings>
-        <KeyBinding Command="{Binding TestCommand}" Key="t"/>
+        <KeyBinding Command="{Binding TestCommand}" Key="t" />
+        <KeyBinding Command="{Binding ToggleRelaisCommand}" Key="r" />
+        <KeyBinding Command="{Binding TestChallengeCommand}" Key="s" />
     </Window.InputBindings>
-    <Grid Margin="5">
+    <Grid Margin="2">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="6*" />
+            <ColumnDefinition Width="10*" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="6*" />
+            <ColumnDefinition Width="2*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -23,35 +26,80 @@
             <RowDefinition Height="3*" />
             <RowDefinition Height="3*" />
         </Grid.RowDefinitions>
-        <TextBlock HorizontalAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" FontSize="80" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" FontStyle="Italic">
+        <TextBlock HorizontalAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" FontSize="80" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4">
             Ruderclub Baden Row Meter
         </TextBlock>
-        <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="50" FontWeight="Bold">
-            Leistung [W]
-        </TextBlock>
-        <TextBlock Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="50" FontWeight="Bold" Text="{Binding Power}" />
-        <TextBlock Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="50" FontWeight="Bold">
-            Kilometer total
-        </TextBlock>
-        <TextBlock Grid.Row="2" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="50" FontWeight="Bold" Text="{Binding DistanceTotal}" />
-        <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="50" FontWeight="Bold">
-            Bestleistung [W]
-        </TextBlock>
-        <TextBlock Grid.Row="3" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="50" FontWeight="Bold" Text="{Binding BestPower}" />
-        <Image Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="250" Source="Resources/RCB-Hauptlogo.jpg" />
-        <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="30" Margin="5">
-            Projekt von Pascal Berger and Luigi Zadra
-        </TextBlock>
-
-        <TextBlock Grid.Row="3" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="10" Text="{Binding LastError}" />
-
-        <ProgressBar Foreground="Brown" Grid.Row="1" Grid.Column="1" Grid.RowSpan="3" Orientation="Vertical" Margin="10, 10, 0, 10" Value="{Binding Source={x:Static local:Configurations.Instance}, Path=MotorPowerSmooth, Mode=OneWay}" />
-        <ProgressBar Foreground="YellowGreen" Grid.Row="1" Grid.Column="2" Grid.RowSpan="3" Orientation="Vertical" Margin="0, 10, 10, 10" Value="{Binding Source={x:Static local:Configurations.Instance}, Path=LightPowerSmooth, Mode=OneWay}" />
-        <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100"  Margin="10, 10, 0, 10">
+        <StackPanel Grid.Row="1" Grid.Column="3">
+            <TextBlock FontSize="30" FontWeight="Bold">
+                Leistung:
+            </TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock FontSize="50" FontWeight="Bold" Text="{Binding Power}" />
+                <TextBlock FontSize="50" FontWeight="Bold" Margin="10,0,0,0">W</TextBlock>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Grid.Column="3">
+            <TextBlock FontSize="30" FontWeight="Bold">Badenfahrt</TextBlock>
+            <TextBlock FontSize="30" FontWeight="Bold">Total:</TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock FontSize="50" FontWeight="Bold" Text="{Binding DistanceTotal}" />
+                <TextBlock FontSize="50" FontWeight="Bold" Margin="10,0,0,0">km</TextBlock>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Row="3" Grid.Column="3">
+            <TextBlock FontSize="30" FontWeight="Bold">
+                Bestleistung:
+            </TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock FontSize="50" FontWeight="Bold" Text="{Binding BestPower}" />
+                <TextBlock FontSize="50" FontWeight="Bold" Margin="10,0,0,0">W</TextBlock>
+            </StackPanel>
+        </StackPanel>
+        <material:PackIcon Grid.Row="3" Grid.Column="3" Height="100" Width="100" Background="Orange" Kind="Smoke" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10" Visibility="{Binding HasRelay}" />
+        <ProgressBar Height="100" BorderBrush="Transparent" Foreground="Brown" Background="LightGray" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Grid.Row="1" Grid.Column="1" Grid.RowSpan="3" Orientation="Vertical" Margin="10, 10, 0, 10" Value="{Binding Source={x:Static local:Configurations.Instance}, Path=MotorPowerSmooth, Mode=OneWay}" />
+        <ProgressBar Height="100" BorderBrush="Transparent" Foreground="YellowGreen" Background="LightGray" Grid.Row="1" Grid.Column="2" Grid.RowSpan="3" Orientation="Vertical" Margin="0, 10, 10, 10" Value="{Binding Source={x:Static local:Configurations.Instance}, Path=LightPowerSmooth, Mode=OneWay}" />
+        <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="90" Margin="10, 10, 0, 10">
             ⚙️
-        </TextBlock>        
-        <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100" Margin="0, 10, 10, 10">
+        </TextBlock>
+        <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="90" Margin="0, 10, 10, 10">
             💡
         </TextBlock>
+        <DockPanel Grid.Row="1" Grid.Column="0" Grid.RowSpan="3">
+            <Grid DockPanel.Dock="Bottom">
+                <Image HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="250" Source="Resources/RCB-Hauptlogo.jpg" />
+                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="25" Margin="5">
+                    Project by Pascal Berger and Luigi Zadra
+                </TextBlock>
+            </Grid>
+            <Grid DockPanel.Dock="Bottom" Visibility="{Binding IsRunning}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
+                </Grid.ColumnDefinitions>
+                <ProgressBar Grid.Column="0" BorderBrush="Transparent" Foreground="Green" Background="LightGray" Value="{Binding ChallengeProgress}" Height="80" />
+                <TextBlock Grid.Column="0" FontSize="50" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding ChallengeTime}" />
+                <Button Grid.Column="1" Style="{StaticResource MaterialDesignFloatingActionDarkButton}" Background="Red" BorderBrush="Transparent" Command="{Binding StartStopCommand}" CommandParameter="Reset">
+                    <material:PackIcon Kind="Stop" Height="50" Width="50" />
+                </Button>
+            </Grid>
+            <MediaElement LoadedBehavior="Manual" UnloadedBehavior="Manual" MediaEnded="MediaPlayer_MediaEnded" VerticalAlignment="Top" Stretch="Uniform" Margin="0,10,0,0" Source=".\Resources\2000mScull.mp4" Name="ChallengePlayer" Volume="0">
+                <MediaElement.Effect>
+                    <BlurEffect Radius="{Binding PlayerBlur}" />
+                </MediaElement.Effect>
+            </MediaElement>
+        </DockPanel>
+        <Button Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" HorizontalAlignment="Center" material:ButtonAssist.CornerRadius="25" Height="100" Visibility="{Binding IsIdle}" Command="{Binding StartStopCommand}" CommandParameter="Start">
+            <StackPanel Orientation="Horizontal" Margin="20,0">
+                <material:PackIcon Kind="Play" Height="40" Width="40" Margin="0,2,0,0" />
+                <TextBlock FontSize="30" Margin="20,0,0,0" FontWeight="Bold">1000m Challenge starten!</TextBlock>
+            </StackPanel>
+        </Button>
+        <Button Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" HorizontalAlignment="Center" material:ButtonAssist.CornerRadius="25" Height="100" Visibility="{Binding IsDone}" Command="{Binding StartStopCommand}" CommandParameter="Continue">
+            <StackPanel Orientation="Horizontal" Margin="20,0">
+                <material:PackIcon Kind="Play" Height="40" Width="40" Margin="0,2,0,0" />
+                <TextBlock FontSize="30" Margin="20,0,0,0" FontWeight="Bold">Weiteres Teammitglied starten!</TextBlock>
+            </StackPanel>
+        </Button>
+        <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="10" Text="{Binding LastError}" />
     </Grid>
 </Window>

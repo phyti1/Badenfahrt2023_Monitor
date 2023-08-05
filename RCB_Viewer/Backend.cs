@@ -75,6 +75,7 @@ namespace RCB_Viewer
                                                 port.Open();
                                                 port.WriteLine($"M{(int)Math.Round(Configurations.Instance.MotorPowerSmooth)}");
                                                 port.WriteLine($"D{(int)Math.Round(Configurations.Instance.LightPowerSmooth)}");
+                                                port.WriteLine($"R{Configurations.Instance.RelayLevel}");
                                                 port.Close();
                                             }
                                             catch (Exception e)
@@ -98,6 +99,11 @@ namespace RCB_Viewer
                                     else
                                     {
                                         Configurations.Instance.Power = devices[i].GetPower();
+                                        if(Configurations.Instance.ChallengeState == ChallengeStates.WaitForTrigger)
+                                        {
+                                            //start challenge
+                                            Configurations.Instance.ChallengeState = ChallengeStates.Running;
+                                        }
                                     }
                                     Configurations.Instance.Distance = devices[i].GetDistance();
 

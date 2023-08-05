@@ -32,10 +32,23 @@ namespace RCB_Viewer
             InitializeComponent();
 
             DataContext = Configurations.Instance;
+            Configurations.Instance.ChallengePlayer = ChallengePlayer;
+            ChallengePlayer.Position = TimeSpan.Zero;
+            ChallengePlayer.Play();
 
             Configurations.Instance.Backend = new Backend();
             Closing += OnWindowClosing;
+            //ChallengePlayer.Source = new Uri("")
+
             this.WindowState = WindowState.Maximized;
+
+        }
+
+        private void MediaPlayer_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            // Restart the media playback when it ends
+            ChallengePlayer.Position = TimeSpan.Zero;
+            ChallengePlayer.Play();
         }
     }
 }

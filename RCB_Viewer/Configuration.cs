@@ -18,9 +18,17 @@ using System.Windows.Media.Animation;
 using System.Threading;
 using System.Windows;
 using System.Windows.Data;
+using System.Globalization;
 
 namespace RCB_Viewer
 {
+    public enum ChallengeStates
+    {
+        Idle,
+        WaitForTrigger,
+        Running,
+        Done,
+    }
     internal class Configurations : INotifyPropertyChanged
     {
         [JsonIgnore]
@@ -59,6 +67,9 @@ namespace RCB_Viewer
 
         [JsonIgnore]
         public Backend Backend { get; set; }
+        
+        [JsonIgnore]
+        public System.Windows.Controls.MediaElement ChallengePlayer { get; set; }
 
         private bool _isTesting = false;
         [JsonIgnore]
@@ -88,7 +99,292 @@ namespace RCB_Viewer
             });
             Configurations.Instance._isTesting = false;
         });
+        [JsonIgnore]
+        public ICommand TestChallengeCommand { get; } = new RelayCommand(async (args) => 
+        {
+            await Task.Run(() =>
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Instance.ChallengeState = ChallengeStates.Running;
+                });
+                for (int i = 0; i < 100; i++)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Instance.Distance += Instance.ChallengeGoalM / 100;
+                    });
+                    Thread.Sleep(100);
+                }
+            });
+        });
+        [JsonIgnore]
+        public ICommand ToggleRelaisCommand { get; } = new RelayCommand((args) =>
+        {
+            if(Instance.RelayLevel == 0)
+            {
+                Instance.RelayLevel = 100;
+            }
+            else
+            {
+                Instance.RelayLevel = 0;
+            }
+        });
+        [JsonIgnore]
+        public ICommand StartStopCommand { get; } = new RelayCommand((args) =>
+        {
+            if(args.ToString() == "Reset")
+            {
+                Instance.ChallengeState = ChallengeStates.Idle;
+                Instance.PrevChallengeTime = TimeSpan.Zero;
+            }
+            if(args.ToString() == "Start")
+            {
+                Instance.ChallengeState = ChallengeStates.WaitForTrigger;
+            }
+            if(args.ToString() == "Continue")
+            {
+                //weiteres Teammitglied
+                Instance.PrevChallengeTime = Instance.ChallengeTime;
+                Instance.ChallengeState = ChallengeStates.WaitForTrigger;
+            }
+        });
+        private ChallengeStates _challengeState;
+        [JsonIgnore]
+        public ChallengeStates ChallengeState
+        {
+            get => _challengeState;
+            set
+            {
+                _challengeState = value;
+                OnPropertyChanged();
+                if(_challengeState == ChallengeStates.WaitForTrigger)
+                {
+                    Instance.ChallengeProgress = 0;
+                    Instance.ChallengePlayer.Position = TimeSpan.FromSeconds(10);
+                    Instance.PlayerBlur = 0;
+                    Instance.ChallengePlayer.Play();
+                    Instance.ChallengePlayer.Pause();
+                }
+                if (_challengeState == ChallengeStates.Running)
+                {
+                    Instance.ChallengeStartDistance = Instance.Distance;
+                    Instance.PlayerBlur = 0;
+                    Instance.ChallangeStartTime = DateTime.Now;
+                    Instance.ChallengePlayer.Play();
+                }
+                if(_challengeState == ChallengeStates.Done)
+                {
+                    Instance.PlayerBlur = 30;
+                    Instance.ChallengeProgress = 100;
+                    TriggerRelay();
+                }
+                if (_challengeState == ChallengeStates.Idle)
+                {
+                    IsIdle = Visibility.Visible;
+                    IsRunning = Visibility.Collapsed;
+                    ChallengeTime = TimeSpan.Zero;
+                    PlayerBlur = 30;
+                    Instance.ChallengePlayer.Position = TimeSpan.Zero;
+                    Instance.ChallengePlayer.Play();
+                }
+                else
+                {
+                    IsIdle = Visibility.Collapsed;
+                    IsRunning = Visibility.Visible;
+                }
+                if(_challengeState == ChallengeStates.Done)
+                {
+                    IsDone = Visibility.Visible;
+                }
+                else
+                {
+                    IsDone = Visibility.Collapsed;
+                }
+            }
+        }
+        private Visibility _isIdle = Visibility.Visible;
+        [JsonIgnore]
+        public Visibility IsIdle
+        {
+            get => _isIdle;
+            private set
+            {
+                _isIdle = value;
+                OnPropertyChanged();
+            }
+        }
+        private Visibility _isRunning = Visibility.Collapsed;
+        [JsonIgnore]
+        public Visibility IsRunning
+        {
+            get => _isRunning;
+            private set
+            {
+                _isRunning = value;
+                OnPropertyChanged();
+            }
+        }
+        [JsonIgnore]
+        public DateTime ChallangeStartTime { get; set; }
+        private TimeSpan _challengeTime = TimeSpan.Zero;
+        [JsonIgnore]
+        public TimeSpan ChallengeTime
+        {
+            get => _challengeTime;
+            set
+            {
+                _challengeTime = value;
+                OnPropertyChanged();
+            }
+        }
+        private TimeSpan _prevChallengeTime = TimeSpan.Zero;
+        [JsonIgnore]
+        public TimeSpan PrevChallengeTime
+        {
+            get => _prevChallengeTime;
+            set
+            {
+                _prevChallengeTime = value;
+                OnPropertyChanged();
+            }
+        }
+        private int _challengeStartDistance = 0;
+        [JsonIgnore]
+        public int ChallengeStartDistance
+        {
+            get => _challengeStartDistance;
+            set
+            {
+                _challengeStartDistance = value;
+                OnPropertyChanged();
+            }
+        }
+        private int _challengeGoalM = 1000;
+        public int ChallengeGoalM
+        {
+            get => _challengeGoalM;
+            set
+            {
+                _challengeGoalM = value;
+                OnPropertyChanged();
+            }
+        }
+        private double _challengeProgress = 0;
+        [JsonIgnore]
+        public double ChallengeProgress
+        {
+            get => _challengeProgress;
+            set
+            {
+                _challengeProgress = value;
+                OnPropertyChanged();
+            }
+        }
+        private Visibility _isDone = Visibility.Collapsed;
+        [JsonIgnore]
+        public Visibility IsDone
+        {
+            get => _isDone;
+            set
+            {
+                _isDone = value;
+                OnPropertyChanged();
+            }
+        }
+        private int _playerBlur = 30;
+        [JsonIgnore]
+        public int PlayerBlur
+        {
+            get => _playerBlur;
+            set
+            {
+                _playerBlur = value;
+                OnPropertyChanged();
+            }
+        }
 
+        private int _relayLevel = 0;
+        [JsonIgnore]
+        public int RelayLevel
+        {
+            get => _relayLevel;
+            set
+            {
+                _relayLevel = value;
+                OnPropertyChanged();
+
+                if (_relayLevel == 100)
+                {
+                    HasRelay = Visibility.Visible;
+                }
+                else
+                {
+                    HasRelay = Visibility.Collapsed;
+                }
+            }
+        }
+        private Visibility _hasRelay = Visibility.Collapsed;
+        [JsonIgnore]
+        public Visibility HasRelay
+        {
+            get => _hasRelay;
+            set
+            {
+                _hasRelay = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private int _relayOnS = 10;
+        public int RelayOnS
+        {
+            get => _relayOnS;
+            set
+            {
+                _relayOnS = value;
+                OnPropertyChanged();
+            }
+        }
+        private static bool _locked = false;
+        static void TriggerRelay()
+        {
+            if(!_locked)
+            {
+                _locked = true;
+                Instance.RelayLevel = 100;
+                Task.Run(() =>
+                {
+                    Thread.Sleep(Instance.RelayOnS * 1000);
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Instance.RelayLevel = 0;
+                    });
+                });
+                _locked = false;
+            }
+        }
+        private bool _readyToTrigger = true;
+        private int _relayTriggerW = 300;
+        public int RelayTriggerW
+        {
+            get => _relayTriggerW;
+            set
+            {
+                _relayTriggerW = value;
+                OnPropertyChanged();
+            }
+        }
+        private int _relayTriggerResetW = 200;
+        public int RelayTriggerResetW
+        {
+            get => _relayTriggerResetW;
+            set
+            {
+                _relayTriggerResetW = value;
+                OnPropertyChanged();
+            }
+        }
 
         private int _power;
         [JsonIgnore]
@@ -104,6 +400,15 @@ namespace RCB_Viewer
                 if (_power > _bestPower)
                 {
                     BestPower = _power;
+                }
+                if(_readyToTrigger && Power > RelayTriggerW)
+                {
+                    TriggerRelay();
+                    _readyToTrigger = false;
+                }
+                if(Power < RelayTriggerResetW)
+                {
+                    _readyToTrigger = true;
                 }
             }
         }
@@ -295,6 +600,18 @@ namespace RCB_Viewer
                 _distance = value;
                 OnPropertyChanged();
                 DistanceTotal = 0;
+
+                //challenge specific updates
+                if (Instance.ChallengeState == ChallengeStates.Running)
+                {
+                    Instance.ChallengeTime = (DateTime.Now - Instance.ChallangeStartTime) + PrevChallengeTime;
+                    Instance.ChallengeProgress = ((double)(Instance.Distance - Instance.ChallengeStartDistance)) / ((double)Instance.ChallengeGoalM) * 100;
+                    //check if done
+                    if (Instance.Distance - Instance.ChallengeStartDistance >= Instance.ChallengeGoalM)
+                    {
+                        Instance.ChallengeState = ChallengeStates.Done;
+                    }
+                }
             }
         }
 
@@ -303,7 +620,7 @@ namespace RCB_Viewer
         {
             get
             {
-                return Math.Round(((double)(_distance + _prevDistance)) / 1000, 2);
+                return Math.Round(((double)(_distance + _prevDistance)) / 1000, 1);
             }
             set
             {
