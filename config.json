@@ -1,4 +1,8 @@
 {
+  "ChallengeGoalM": 1000,
+  "RelayOnS": 10,
+  "RelayTriggerW": 300,
+  "RelayTriggerResetW": 200,
   "MotorPowerMin": 0,
   "MotorPowerMax": 1000,
   "LightPowerMin": 250,

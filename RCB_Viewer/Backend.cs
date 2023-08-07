@@ -113,8 +113,9 @@ namespace RCB_Viewer
                                     //                  "\n    Drag: " + devices[i].GetDrag() +
                                     //                  "\n    Power: " + devices[i].GetPower() +
                                     //                  "\n    Time: " + devices[i].GetTime());
-                                    Debug.WriteLine(Configurations.Instance.Power.ToString());
-                                    Debug.WriteLine(Configurations.Instance.Distance.ToString());
+                                    //Debug.WriteLine(Configurations.Instance.Power.ToString());
+                                    //Debug.WriteLine(Configurations.Instance.Distance.ToString());
+                                    //Debug.WriteLine(Configurations.Instance.RelayLevel.ToString());
                                 }
 
                                 Configurations.Instance.MotorPowerHist.Add(Configurations.Instance.MotorPower);

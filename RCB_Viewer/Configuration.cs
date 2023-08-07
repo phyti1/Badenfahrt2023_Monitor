@@ -160,7 +160,7 @@ namespace RCB_Viewer
                 OnPropertyChanged();
                 if(_challengeState == ChallengeStates.WaitForTrigger)
                 {
-                    Instance.ChallengeProgress = 0;
+                    Instance.ChallengeDistance = 0;
                     Instance.ChallengePlayer.Position = TimeSpan.FromSeconds(10);
                     Instance.PlayerBlur = 0;
                     Instance.ChallengePlayer.Play();
@@ -176,7 +176,7 @@ namespace RCB_Viewer
                 if(_challengeState == ChallengeStates.Done)
                 {
                     Instance.PlayerBlur = 30;
-                    Instance.ChallengeProgress = 100;
+                    Instance.ChallengeDistance = Instance.ChallengeGoalM;
                     TriggerRelay();
                 }
                 if (_challengeState == ChallengeStates.Idle)
@@ -279,6 +279,18 @@ namespace RCB_Viewer
             {
                 _challengeProgress = value;
                 OnPropertyChanged();
+            }
+        }
+        private double _challengeDistance = 0;
+        [JsonIgnore]
+        public double ChallengeDistance
+        {
+            get => _challengeDistance;
+            set
+            {
+                _challengeDistance = value;
+                OnPropertyChanged();
+                ChallengeProgress = (double)_challengeDistance / (double)ChallengeGoalM * 100;
             }
         }
         private Visibility _isDone = Visibility.Collapsed;
@@ -597,6 +609,11 @@ namespace RCB_Viewer
             get => _distance;
             set
             {
+                //if distance is resetted on ergo
+                if(value < _distance)
+                {
+                    _prevDistance += _distance;
+                }
                 _distance = value;
                 OnPropertyChanged();
                 DistanceTotal = 0;
@@ -605,7 +622,7 @@ namespace RCB_Viewer
                 if (Instance.ChallengeState == ChallengeStates.Running)
                 {
                     Instance.ChallengeTime = (DateTime.Now - Instance.ChallangeStartTime) + PrevChallengeTime;
-                    Instance.ChallengeProgress = ((double)(Instance.Distance - Instance.ChallengeStartDistance)) / ((double)Instance.ChallengeGoalM) * 100;
+                    Instance.ChallengeDistance = (double)(Instance.Distance - Instance.ChallengeStartDistance);
                     //check if done
                     if (Instance.Distance - Instance.ChallengeStartDistance >= Instance.ChallengeGoalM)
                     {
@@ -620,7 +637,7 @@ namespace RCB_Viewer
         {
             get
             {
-                return Math.Round(((double)(_distance + _prevDistance)) / 1000, 1);
+                return Math.Round(((double)(_distance + _prevDistance)) / 1000, 2);
             }
             set
             {
