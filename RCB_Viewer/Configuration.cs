@@ -139,6 +139,8 @@ namespace RCB_Viewer
                     });
                     Thread.Sleep(100);
                 }
+                //correct total distance
+                Instance._distance -= 1000;
             });
         });
         [JsonIgnore]
@@ -739,7 +741,7 @@ namespace RCB_Viewer
                     //random
                     if (_videoIndex == -1)
                     {
-                        _videoIndex = new Random().Next(0, ChallengeVideos.Count() - 1);
+                        _videoIndex = new Random().Next(0, ChallengeVideos.Count());
                     }
                     PlayerSource = new Uri(ChallengeVideos[_videoIndex], UriKind.RelativeOrAbsolute);
                     MapSource = new Uri(ChallengeMaps[_videoIndex], UriKind.RelativeOrAbsolute);
