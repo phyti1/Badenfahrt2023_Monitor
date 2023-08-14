@@ -67,9 +67,9 @@
         <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="90" Margin="0, 10, 10, 10">
             💡
         </TextBlock>
+        <Image Grid.Column="3" Width="250" Source="Resources/RCB-Hauptlogo.jpg" />
         <DockPanel Grid.Row="1" Grid.Column="0" Grid.RowSpan="3">
             <Grid DockPanel.Dock="Bottom">
-                <Image HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="250" Source="Resources/RCB-Hauptlogo.jpg" />
                 <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="30" FontWeight="Bold" Margin="5">
                     Project by Pascal Berger and Luigi Zadra
                 </TextBlock>
@@ -85,28 +85,34 @@
                     <material:PackIcon Kind="Stop" Height="50" Width="50" />
                 </Button>
             </Grid>
-            <MediaElement LoadedBehavior="Manual" UnloadedBehavior="Manual" MediaEnded="MediaPlayer_MediaEnded" VerticalAlignment="Top" Stretch="Uniform" Margin="0,10,0,0" Source=".\Resources\2000mScull.mp4" Name="ChallengePlayer" Volume="0">
+            <MediaElement LoadedBehavior="Manual" UnloadedBehavior="Manual" MediaEnded="MediaPlayer_MediaEnded" Source="{Binding PlayerSource}" VerticalAlignment="Top" Stretch="Uniform" Margin="10,10,0,0" Name="ChallengePlayer" Volume="100">
                 <MediaElement.Effect>
                     <BlurEffect Radius="{Binding PlayerBlur}" />
                 </MediaElement.Effect>
             </MediaElement>
         </DockPanel>
         <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Top" Visibility="{Binding IsRunning}">
-            <TextBlock FontSize="200" Foreground="White" Text="{Binding Distance}" />
+            <TextBlock FontSize="200" Foreground="White" Text="{Binding ChallengeDistance}" />
             <TextBlock FontSize="200" Foreground="White" Text="m" />
         </StackPanel>
-        <Button Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" HorizontalAlignment="Center" material:ButtonAssist.CornerRadius="25" Height="100" Visibility="{Binding IsIdle}" Command="{Binding StartStopCommand}" CommandParameter="Start">
-            <StackPanel Orientation="Horizontal" Margin="20,0">
-                <material:PackIcon Kind="Play" Height="40" Width="40" Margin="0,2,0,0" />
-                <TextBlock FontSize="30" Margin="20,0,0,0" FontWeight="Bold">1000m Challenge starten!</TextBlock>
-            </StackPanel>
-        </Button>
-        <Button Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" HorizontalAlignment="Center" material:ButtonAssist.CornerRadius="25" Height="100" Visibility="{Binding IsDone}" Command="{Binding StartStopCommand}" CommandParameter="Continue">
-            <StackPanel Orientation="Horizontal" Margin="20,0">
-                <material:PackIcon Kind="Play" Height="40" Width="40" Margin="0,2,0,0" />
-                <TextBlock FontSize="30" Margin="20,0,0,0" FontWeight="Bold">Weiteres Teammitglied starten!</TextBlock>
-            </StackPanel>
-        </Button>
+        <StackPanel Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Height="200" Visibility="{Binding IsDone}" />
+            <Image Margin="0,20" Width="500" VerticalAlignment="Top" HorizontalAlignment="Center" Visibility="{Binding IsIdle}" Source="{Binding MapSource}" />
+            <Button HorizontalAlignment="Center" material:ButtonAssist.CornerRadius="25" Height="100" Visibility="{Binding IsIdle}" Command="{Binding StartStopCommand}" CommandParameter="Start">
+                <StackPanel Orientation="Horizontal" Margin="20,0">
+                    <material:PackIcon Kind="Play" Height="40" Width="40" Margin="0,2,0,0" />
+                    <TextBlock FontSize="30" Margin="20,0,0,0" FontWeight="Bold">1000m Challenge starten!</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button HorizontalAlignment="Center" material:ButtonAssist.CornerRadius="25" Height="100" Visibility="{Binding IsDone}" Command="{Binding StartStopCommand}" CommandParameter="Continue">
+                <StackPanel Orientation="Horizontal" Margin="20,0">
+                    <material:PackIcon Kind="Play" Height="40" Width="40" Margin="0,2,0,0" />
+                    <TextBlock FontSize="30" Margin="20,0,0,0" FontWeight="Bold">Weiteres Teammitglied starten!</TextBlock>
+                </StackPanel>
+            </Button>
+            <ComboBox Margin="10,20" FontSize="30" material:HintAssist.Hint="Rower" ItemsSource="{Binding PlayerList}" SelectedIndex="{Binding SelectedPlayerIndex}" Visibility="{Binding IsIdle}" />
+            <ComboBox Margin="10,20" FontSize="30" material:HintAssist.Hint="Rower" ItemsSource="{Binding PlayerList}" SelectedIndex="{Binding SelectedPlayerIndex}" Visibility="{Binding IsDone}" />
+        </StackPanel>
         <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="10" Text="{Binding LastError}" />
     </Grid>
 </Window>

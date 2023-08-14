@@ -11,6 +11,15 @@
   <ItemGroup>
     <None Remove="Resources\2000mScull.mp4" />
     <None Remove="Resources\RCB-Hauptlogo.jpg" />
+    <None Remove="Resources\RCB_POV\Portrait_Carole.jpg" />
+    <None Remove="Resources\RCB_POV\Portrait_Jelle.JPG" />
+    <None Remove="Resources\RCB_POV\Portrait_Jonathan.JPG" />
+    <None Remove="Resources\RCB_POV\Race_Carole_5min.mp4" />
+    <None Remove="Resources\RCB_POV\Race_Jelle_7min.mp4" />
+    <None Remove="Resources\RCB_POV\Race_Jonathan_6min.mp4" />
+    <None Remove="Resources\RCB_POV\Streckenfuehrung_Carole.jpg" />
+    <None Remove="Resources\RCB_POV\Streckenfuehrung_Jelle.jpg" />
+    <None Remove="Resources\RCB_POV\Streckenfuehrung_Joanthan.jpg" />
     <None Remove="Resources\rcb_small.ico" />
     <None Remove="Resources\Roboto-Regular.ttf" />
     <None Remove="Resources\Roboto-Thin.ttf" />
@@ -28,6 +37,33 @@
 
   <ItemGroup>
     <Content Include="Resources\2000mScull.mp4">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\RCB_POV\Portrait_Carole.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\RCB_POV\Portrait_Jelle.JPG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\RCB_POV\Portrait_Jonathan.JPG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\RCB_POV\Race_Carole_5min.mp4">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\RCB_POV\Race_Jelle_7min.mp4">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\RCB_POV\Race_Jonathan_6min.mp4">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\RCB_POV\Streckenfuehrung_Carole.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\RCB_POV\Streckenfuehrung_Jelle.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\RCB_POV\Streckenfuehrung_Joanthan.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Resources\RCB-Hauptlogo.jpg">

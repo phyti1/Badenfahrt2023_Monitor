@@ -60,7 +60,7 @@ namespace RCB_Viewer
             _configIsLoading = true;
             Configurations.Instance = new Configurations()
             {
-
+                //default initiallizers if necessary
             };
             _configIsLoading = false;
         }
@@ -70,6 +70,29 @@ namespace RCB_Viewer
         
         [JsonIgnore]
         public System.Windows.Controls.MediaElement ChallengePlayer { get; set; }
+
+        private int _playerBlur = 30;
+        [JsonIgnore]
+        public int PlayerBlur
+        {
+            get => _playerBlur;
+            set
+            {
+                _playerBlur = value;
+                OnPropertyChanged();
+            }
+        }
+        private Uri _playerSource;
+        public Uri PlayerSource
+        {
+            get => _playerSource;
+            set
+            {
+                _playerSource = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         private bool _isTesting = false;
         [JsonIgnore]
@@ -137,8 +160,10 @@ namespace RCB_Viewer
             {
                 Instance.ChallengeState = ChallengeStates.Idle;
                 Instance.PrevChallengeTime = TimeSpan.Zero;
+                //retrigger random if selected
+                Instance.SelectedPlayerIndex = Instance.SelectedPlayerIndex;
             }
-            if(args.ToString() == "Start")
+            if (args.ToString() == "Start")
             {
                 Instance.ChallengeState = ChallengeStates.WaitForTrigger;
             }
@@ -147,6 +172,8 @@ namespace RCB_Viewer
                 //weiteres Teammitglied
                 Instance.PrevChallengeTime = Instance.ChallengeTime;
                 Instance.ChallengeState = ChallengeStates.WaitForTrigger;
+                //retrigger random if selected
+                Instance.SelectedPlayerIndex = Instance.SelectedPlayerIndex;
             }
         });
         private ChallengeStates _challengeState;
@@ -161,10 +188,10 @@ namespace RCB_Viewer
                 if(_challengeState == ChallengeStates.WaitForTrigger)
                 {
                     Instance.ChallengeDistance = 0;
-                    Instance.ChallengePlayer.Position = TimeSpan.FromSeconds(10);
+                    Instance.ChallengePlayer.Position = TimeSpan.FromSeconds(4);
                     Instance.PlayerBlur = 0;
-                    Instance.ChallengePlayer.Play();
-                    Instance.ChallengePlayer.Pause();
+                    ChallengePlayer.Play();
+                    ChallengePlayer.Pause();
                 }
                 if (_challengeState == ChallengeStates.Running)
                 {
@@ -301,17 +328,6 @@ namespace RCB_Viewer
             set
             {
                 _isDone = value;
-                OnPropertyChanged();
-            }
-        }
-        private int _playerBlur = 30;
-        [JsonIgnore]
-        public int PlayerBlur
-        {
-            get => _playerBlur;
-            set
-            {
-                _playerBlur = value;
                 OnPropertyChanged();
             }
         }
@@ -616,7 +632,7 @@ namespace RCB_Viewer
                 }
                 _distance = value;
                 OnPropertyChanged();
-                DistanceTotal = 0;
+                OnPropertyChanged(nameof(DistanceTotal));
 
                 //challenge specific updates
                 if (Instance.ChallengeState == ChallengeStates.Running)
@@ -639,8 +655,109 @@ namespace RCB_Viewer
             {
                 return Math.Round(((double)(_distance + _prevDistance)) / 1000, 2);
             }
+        }
+
+        private ObservableCollection<string> _challengeVideos = new ObservableCollection<string>();
+        public ObservableCollection<string> ChallengeVideos
+        {
+            get
+            {
+                if(_challengeVideos.Count == 0)
+                {
+                    return new ObservableCollection<string>()
+                    {
+                        @".\Resources\RCB_POV\Race_Carole_5min.mp4",
+                        @".\Resources\RCB_POV\Race_Jelle_7min.mp4",
+                        @".\Resources\RCB_POV\Race_Jonathan_6min.mp4"
+                    };
+                }
+                return _challengeVideos;
+            }
             set
             {
+                _challengeVideos = value;
+                OnPropertyChanged();
+            }
+        }
+        private ObservableCollection<string> _challengeMaps = new ObservableCollection<string>();
+        public ObservableCollection<string> ChallengeMaps
+        {
+            get
+            {
+                if (_challengeMaps.Count == 0)
+                {
+                    return new ObservableCollection<string>()
+                    {
+                        @".\Resources\RCB_POV\Streckenfuehrung_Carole.jpg",
+                        @".\Resources\RCB_POV\Streckenfuehrung_Jelle.jpg",
+                        @".\Resources\RCB_POV\Streckenfuehrung_Joanthan.jpg"
+                    };
+                }
+                return _challengeMaps;
+            }
+            set
+            {
+                _challengeMaps = value;
+                OnPropertyChanged();
+            }
+        }
+        private ObservableCollection<string> _playerList = new ObservableCollection<string>();
+        public ObservableCollection<string> PlayerList
+        {
+            get
+            {
+                if (_playerList.Count == 0)
+                {
+                    return new ObservableCollection<string>()
+                    {
+                        "Zufällig",
+                        "Carole",
+                        "Jelle",
+                        "Jonathan",
+                    };
+                }
+                return _playerList;
+            }
+            set
+            {
+                _playerList = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private int _selectedPlayerIndex = 0;
+        public int SelectedPlayerIndex
+        {
+            get => _selectedPlayerIndex;
+            set
+            {
+                _selectedPlayerIndex = value;
+                OnPropertyChanged();
+                try
+                {
+                    int _videoIndex = value - 1;
+                    //random
+                    if (_videoIndex == -1)
+                    {
+                        _videoIndex = new Random().Next(0, ChallengeVideos.Count() - 1);
+                    }
+                    PlayerSource = new Uri(ChallengeVideos[_videoIndex], UriKind.RelativeOrAbsolute);
+                    MapSource = new Uri(ChallengeMaps[_videoIndex], UriKind.RelativeOrAbsolute);
+                }
+                catch (Exception ex)
+                {
+                    LastError = ex.ToString();
+                }
+            }
+        }
+        private Uri _mapSource;
+        [JsonIgnore]
+        public Uri MapSource
+        {
+            get => _mapSource;
+            set
+            {
+                _mapSource = value;
                 OnPropertyChanged();
             }
         }
