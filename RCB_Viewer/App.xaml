@@ -1,8 +1,7 @@
 ﻿<Application x:Class="RCB_Viewer.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:RCB_Viewer"
-             StartupUri="MainWindow.xaml">
+             xmlns:local="clr-namespace:RCB_Viewer">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

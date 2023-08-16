@@ -19,6 +19,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using System.Globalization;
+using System.Windows.Controls;
 
 namespace RCB_Viewer
 {
@@ -67,9 +68,9 @@ namespace RCB_Viewer
 
         [JsonIgnore]
         public Backend Backend { get; set; }
-        
+
         [JsonIgnore]
-        public System.Windows.Controls.MediaElement ChallengePlayer { get; set; }
+        public List<MediaElement> ChallengePlayers { get; set; } = new List<MediaElement>();
 
         private int _playerBlur = 30;
         [JsonIgnore]
@@ -96,17 +97,23 @@ namespace RCB_Viewer
 
         private bool _isTesting = false;
         [JsonIgnore]
+        public bool IsTesting
+        {
+            get => _isTesting;
+        }
+
+        [JsonIgnore]
         public ICommand TestCommand { get; } = new RelayCommand(async (args) =>
         {
-            if (Configurations.Instance._isTesting) { return; }
-            Configurations.Instance._isTesting = true;
+            if (Instance._isTesting) { return; }
+            Instance._isTesting = true;
             await Task.Run(() =>
             {
                 foreach (int i in Enumerable.Range(1, 5))
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        Configurations.Instance.Power += (Instance.MotorPowerMax - Instance.MotorPowerMin) / 5;
+                        Instance.Power += (Instance.MotorPowerMax - Instance.MotorPowerMin) / 5;
                     });
                     Thread.Sleep(3000);
                 }
@@ -115,7 +122,7 @@ namespace RCB_Viewer
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        Configurations.Instance.Power -= (Instance.MotorPowerMax - Instance.MotorPowerMin) / 2;
+                        Instance.Power -= (Instance.MotorPowerMax - Instance.MotorPowerMin) / 2;
                     });
                     Thread.Sleep(10000);
                 }
@@ -190,17 +197,17 @@ namespace RCB_Viewer
                 if(_challengeState == ChallengeStates.WaitForTrigger)
                 {
                     Instance.ChallengeDistance = 0;
-                    Instance.ChallengePlayer.Position = TimeSpan.FromSeconds(4);
+                    Instance.ChallengePlayers.ForEach(p => p.Position = TimeSpan.FromSeconds(4));
                     Instance.PlayerBlur = 0;
-                    ChallengePlayer.Play();
-                    ChallengePlayer.Pause();
+                    ChallengePlayers.ForEach(p => p.Play());
+                    ChallengePlayers.ForEach(p => p.Pause());
                 }
                 if (_challengeState == ChallengeStates.Running)
                 {
                     Instance.ChallengeStartDistance = Instance.Distance;
                     Instance.PlayerBlur = 0;
                     Instance.ChallangeStartTime = DateTime.Now;
-                    Instance.ChallengePlayer.Play();
+                    Instance.ChallengePlayers.ForEach(p => p.Play());
                 }
                 if(_challengeState == ChallengeStates.Done)
                 {
@@ -214,8 +221,8 @@ namespace RCB_Viewer
                     IsRunning = Visibility.Collapsed;
                     ChallengeTime = TimeSpan.Zero;
                     PlayerBlur = 30;
-                    Instance.ChallengePlayer.Position = TimeSpan.Zero;
-                    Instance.ChallengePlayer.Play();
+                    Instance.ChallengePlayers.ForEach(p => p.Position = TimeSpan.Zero);
+                    Instance.ChallengePlayers.ForEach(p => p.Play());
                 }
                 else
                 {
@@ -366,7 +373,7 @@ namespace RCB_Viewer
             }
         }
 
-        private int _relayOnS = 10;
+        private int _relayOnS = 5;
         public int RelayOnS
         {
             get => _relayOnS;
@@ -440,6 +447,14 @@ namespace RCB_Viewer
                 {
                     _readyToTrigger = true;
                 }
+                if(value == 0)
+                {
+                    Instance.ChallengePlayers.ForEach(p => p.Pause());
+                }
+                else
+                {
+                    Instance.ChallengePlayers.ForEach(p => p.Play());
+                }
             }
         }
         private int _motorPowerMin = 0;
@@ -452,7 +467,7 @@ namespace RCB_Viewer
                 OnPropertyChanged();
             }
         }
-        private int _motorPowerMax = 1000;
+        private int _motorPowerMax = 400;
         public int MotorPowerMax
         {
             get => _motorPowerMax;
@@ -462,7 +477,7 @@ namespace RCB_Viewer
                 OnPropertyChanged();
             }
         }
-        private int _lightPowerMin = 250;
+        private int _lightPowerMin = 100;
         public int LightPowerMin
         {
             get => _lightPowerMin;
@@ -472,7 +487,7 @@ namespace RCB_Viewer
                 OnPropertyChanged();
             }
         }
-        private int _lightPowerMax = 1000;
+        private int _lightPowerMax = 400;
         public int LightPowerMax
         {
             get => _lightPowerMax;
@@ -483,7 +498,7 @@ namespace RCB_Viewer
             }
         }
 
-        private int _baudRate = 9600;
+        private int _baudRate = 38400;
         public int BaudRate
         {
             get => _baudRate;
@@ -493,7 +508,7 @@ namespace RCB_Viewer
                 OnPropertyChanged();
             }
         }
-        private string _comPort = "COM1";
+        private string _comPort = "COM3";
         public string ComPort
         {
             get => _comPort;
@@ -713,9 +728,9 @@ namespace RCB_Viewer
                     return new ObservableCollection<string>()
                     {
                         "Zufällig",
-                        "Carole",
-                        "Jelle",
-                        "Jonathan",
+                        "Najade",
+                        "Frey",
+                        "Bélier",
                     };
                 }
                 return _playerList;

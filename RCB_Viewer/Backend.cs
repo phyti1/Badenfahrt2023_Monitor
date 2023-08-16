@@ -86,6 +86,11 @@ namespace RCB_Viewer
                                         _isSendingSerial = false;
                                     }
                                 }
+                                if ( init_counter % 100 == 0)
+                                {
+                                    //reset last error from time to time
+                                    Configurations.Instance.LastError = "";
+                                }
                                 init_counter += 1;
 
                                 for (int i = 0; i < devices.Count; i++)
@@ -94,11 +99,17 @@ namespace RCB_Viewer
                                     var _phase = devices[i].GetStrokePhase();
                                     if (_phase == StrokePhase.Catch || _phase == StrokePhase.Idle)
                                     {
-                                        Configurations.Instance.Power = 0;
+                                        if (!Configurations.Instance.IsTesting)
+                                        {
+                                            Configurations.Instance.Power = 0;
+                                        }
                                     }
                                     else
                                     {
-                                        Configurations.Instance.Power = devices[i].GetPower();
+                                        if (!Configurations.Instance.IsTesting)
+                                        {
+                                            Configurations.Instance.Power = devices[i].GetPower();
+                                        }
                                         if(Configurations.Instance.ChallengeState == ChallengeStates.WaitForTrigger)
                                         {
                                             //start challenge

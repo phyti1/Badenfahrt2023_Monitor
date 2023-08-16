@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -43,10 +44,28 @@ namespace RCB_Viewer
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static bool _isClosing = false;
         public void OnWindowClosing(object sender, CancelEventArgs e)
         {
             // Handle closing logic, set e.Cancel as needed
-            Configurations.Instance.PrevDistance = Configurations.Instance.Distance;
+            if (!_isClosing)
+            {
+                _isClosing = true;
+                Configurations.Instance.PrevDistance = Configurations.Instance.Distance;
+                //close all other instances
+
+                foreach (var window in App.AllWindows)
+                {
+                    if (window != this)
+                    {
+                        window.Close();
+                    }
+                    else
+                    {
+                        Debug.WriteLine("found");
+                    }
+                }
+            }
         }
 
         public MainWindow()
@@ -54,7 +73,8 @@ namespace RCB_Viewer
             InitializeComponent();
 
             DataContext = Configurations.Instance;
-            Configurations.Instance.ChallengePlayer = ChallengePlayer;
+            Configurations.Instance.ChallengePlayers.Add(ChallengePlayer);
+
             ChallengePlayer.Position = TimeSpan.Zero;
             ChallengePlayer.Play();
 
@@ -63,7 +83,6 @@ namespace RCB_Viewer
             //ChallengePlayer.Source = new Uri("")
 
             this.WindowState = WindowState.Maximized;
-
         }
 
         private void MediaPlayer_MediaEnded(object sender, RoutedEventArgs e)
