@@ -35,16 +35,20 @@ namespace RCB_Viewer
         [JsonIgnore]
         internal static bool _configIsLoading = false;
 
+        private static object _lockObj = new object();
         private static Configurations _instance = null;
         public static Configurations Instance
         {
             get
             {
-                if (_instance == null)
+                lock(_lockObj)
                 {
-                    Deserialize(true);
+                    if (_instance == null)
+                    {
+                        Deserialize(true);
+                    }
+                    return _instance;
                 }
-                return _instance;
             }
             private set
             {
@@ -67,7 +71,7 @@ namespace RCB_Viewer
         }
 
         [JsonIgnore]
-        public Backend Backend { get; set; }
+        public Backend Backend { get; set; } = null;
 
         [JsonIgnore]
         public List<MediaElement> ChallengePlayers { get; set; } = new List<MediaElement>();
@@ -447,13 +451,16 @@ namespace RCB_Viewer
                 {
                     _readyToTrigger = true;
                 }
-                if(value == 0)
+                if (Instance.ChallengeState == ChallengeStates.Running)
                 {
-                    Instance.ChallengePlayers.ForEach(p => p.Pause());
-                }
-                else
-                {
-                    Instance.ChallengePlayers.ForEach(p => p.Play());
+                    if (value == 0)
+                    {
+                        Instance.ChallengePlayers.ForEach(p => p.Pause());
+                    }
+                    else
+                    {
+                        Instance.ChallengePlayers.ForEach(p => p.Play());
+                    }
                 }
             }
         }

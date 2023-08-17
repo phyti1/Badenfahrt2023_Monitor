@@ -86,9 +86,9 @@
                 </Button>
             </Grid>
             <MediaElement LoadedBehavior="Manual" UnloadedBehavior="Manual" MediaEnded="MediaPlayer_MediaEnded" Source="{Binding PlayerSource}" VerticalAlignment="Top" Stretch="Uniform" Margin="10,10,0,0" Name="ChallengePlayer" Volume="0">
-                <MediaElement.Effect>
+                <!--<MediaElement.Effect>
                     <BlurEffect />
-                </MediaElement.Effect>
+                </MediaElement.Effect>-->
             </MediaElement>
         </DockPanel>
         <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Top" Visibility="{Binding IsRunning}">

@@ -67,7 +67,7 @@ namespace RCB_Viewer
                 }
             }
         }
-
+        private static object _lockob = new object();
         public MainWindow()
         {
             InitializeComponent();
@@ -78,7 +78,13 @@ namespace RCB_Viewer
             ChallengePlayer.Position = TimeSpan.Zero;
             ChallengePlayer.Play();
 
-            Configurations.Instance.Backend = new Backend();
+            lock(_lockob )
+            {
+                if (Configurations.Instance.Backend == null)
+                {
+                    Configurations.Instance.Backend = new Backend();
+                }
+            }
             Closing += OnWindowClosing;
             //ChallengePlayer.Source = new Uri("")
 
