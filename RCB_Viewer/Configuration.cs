@@ -107,7 +107,7 @@ namespace RCB_Viewer
         }
 
         [JsonIgnore]
-        public ICommand TestCommand { get; } = new RelayCommand(async (args) =>
+        public ICommand TestPowerCommand { get; } = new RelayCommand(async (args) =>
         {
             if (Instance._isTesting) { return; }
             Instance._isTesting = true;
@@ -131,11 +131,13 @@ namespace RCB_Viewer
                     Thread.Sleep(10000);
                 }
             });
-            Configurations.Instance._isTesting = false;
+            Instance._isTesting = false;
         });
         [JsonIgnore]
         public ICommand TestChallengeCommand { get; } = new RelayCommand(async (args) => 
         {
+            if (Instance._isTesting) { return; }
+            Instance._isTesting = true;
             await Task.Run(() =>
             {
                 Application.Current.Dispatcher.Invoke(() =>
@@ -153,6 +155,7 @@ namespace RCB_Viewer
                 //correct total distance
                 Instance._distance -= 1000;
             });
+            Instance._isTesting = false;
         });
         [JsonIgnore]
         public ICommand ToggleRelaisCommand { get; } = new RelayCommand((args) =>

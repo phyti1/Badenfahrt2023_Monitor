@@ -116,7 +116,10 @@ namespace RCB_Viewer
                                             Configurations.Instance.ChallengeState = ChallengeStates.Running;
                                         }
                                     }
-                                    Configurations.Instance.Distance = devices[i].GetDistance();
+                                    if(!Configurations.Instance.IsTesting)
+                                    {
+                                        Configurations.Instance.Distance = devices[i].GetDistance();
+                                    }
 
                                     //Console.WriteLine("Device " + i + ":" +
                                     //                  "\n    Phase: " + devices[i].GetStrokePhase() +

@@ -12,9 +12,9 @@
         <local:TimeSpanToDecimalConverter x:Key="TimeSpanToDecimalConverter" />
     </Window.Resources>
     <Window.InputBindings>
-        <KeyBinding Command="{Binding TestCommand}" Key="t" />
-        <KeyBinding Command="{Binding ToggleRelaisCommand}" Key="r" />
-        <KeyBinding Command="{Binding TestChallengeCommand}" Key="s" />
+        <KeyBinding Command="{Binding TestPowerCommand}" Key="p" Modifiers="Shift" />
+        <KeyBinding Command="{Binding TestChallengeCommand}" Key="c" Modifiers="Shift" />
+        <KeyBinding Command="{Binding ToggleRelaisCommand}" Key="r" Modifiers="Shift" />
     </Window.InputBindings>
     <Grid Margin="2">
         <Grid.ColumnDefinitions>
