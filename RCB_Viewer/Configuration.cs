@@ -313,6 +313,17 @@ namespace RCB_Viewer
                 OnPropertyChanged();
             }
         }
+        private string _eventName = "Weihnachtsmarkt";
+        public string EventName
+        {
+            get => _eventName;
+            set
+            {
+                _eventName = value;
+                OnPropertyChanged();
+            }
+        }
+
         private double _challengeProgress = 0;
         [JsonIgnore]
         public double ChallengeProgress

@@ -11,6 +11,8 @@
 
   <ItemGroup>
     <None Remove="Resources\2000mScull.mp4" />
+    <None Remove="Resources\RCA-Hauptlogo.png" />
+    <None Remove="Resources\rca_small.ico" />
     <None Remove="Resources\RCB-Hauptlogo.jpg" />
     <None Remove="Resources\RCB_POV\Portrait_Carole.jpg" />
     <None Remove="Resources\RCB_POV\Portrait_Jelle.JPG" />
@@ -73,6 +75,10 @@
     <Content Include="Resources\RCB_POV\Streckenfuehrung_Joanthan.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\RCA-Hauptlogo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\rca_small.ico" />
     <Resource Include="Resources\RCB-Hauptlogo.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
